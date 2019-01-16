@@ -1,0 +1,8 @@
+{
+  "name": "@susisu/ppp",
+  "version": "0.0.0",
+  "description": "package.json pretty printer",
+  "repository": "https://github.com/susisu/ppp.git",
+  "author": "Susisu <susisu2413@yahoo.co.jp>",
+  "license": "MIT"
+}
