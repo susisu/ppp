@@ -2,4 +2,69 @@
 
 "use strict";
 
-process.stdout.write("Hello, world!\n");
+const indent = require("indent-string");
+
+const printer = require("../lib/printer");
+
+process.title = "ppp";
+process.stdin.setEncoding("utf8");
+
+function readStdin() {
+  let buffer = "";
+
+  return new Promise((resolve, reject) => {
+    process.stdin.on("readable", () => {
+      const chunk = process.stdin.read();
+      if (chunk !== null) {
+        buffer += chunk;
+      }
+    });
+    process.stdin.on("end", () => {
+      resolve(buffer);
+    });
+  });
+}
+
+function parseJSON(str) {
+  return new Promise((resolve, reject) => {
+    try {
+      const data = JSON.parse(str);
+      resolve(data);
+    }
+    catch (err) {
+      reject(err);
+    }
+  });
+}
+
+// TODO
+const fieldNames = [
+  "name",
+  "version",
+  "homepage",
+  "author",
+  "license",
+  "description",
+  "keywords",
+  "dist-tags",
+  "bin",
+  "dependencies",
+];
+
+const wrapSize = 80;
+const indentSize = 2;
+
+async function main() {
+  const input = await readStdin();
+  const data = await parseJSON(input);
+  const pkg = Array.isArray(data) ? data[data.length - 1] : data;
+  const text = indent(
+    printer.print(pkg, fieldNames, wrapSize - indentSize, indentSize),
+    indentSize
+  );
+  process.stdout.write(text + "\n");
+}
+
+main().catch(err => {
+  process.stderr.write(String(err) + "\n");
+});
