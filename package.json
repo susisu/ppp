@@ -4,5 +4,15 @@
   "description": "package.json pretty printer",
   "repository": "https://github.com/susisu/ppp.git",
   "author": "Susisu <susisu2413@yahoo.co.jp>",
-  "license": "MIT"
+  "license": "MIT",
+  "directories": {
+    "bin": "bin"
+  },
+  "scripts": {
+    "lint": "eslint lib bin/ppp",
+    "fix": "eslint lib bin/ppp --fix"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.0"
+  }
 }
