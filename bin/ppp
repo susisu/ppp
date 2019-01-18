@@ -26,18 +26,7 @@ function readStdin() {
 }
 
 // TODO
-const fieldNames = [
-  "name",
-  "version",
-  "homepage",
-  "author",
-  "license",
-  "description",
-  "keywords",
-  "dist-tags",
-  "bin",
-  "dependencies",
-];
+const fields = printer.availableFileds;
 
 const wrapSize = 80;
 const indentSize = 2;
@@ -47,7 +36,7 @@ async function main() {
   const data = JSON.parse(input);
   const pkg = Array.isArray(data) ? data[data.length - 1] : data;
   const text = indent(
-    printer.print(pkg, fieldNames, wrapSize - indentSize, indentSize),
+    printer.print(pkg, fields, wrapSize - indentSize, indentSize),
     indentSize
   );
   process.stdout.write(text + "\n");
