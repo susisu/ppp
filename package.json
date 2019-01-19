@@ -21,6 +21,7 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "indent-string": "^3.2.0",
+    "js-yaml": "^3.12.1",
     "strip-ansi": "^5.0.0",
     "wrap-ansi": "^4.0.0"
   }

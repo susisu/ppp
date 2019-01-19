@@ -2,12 +2,25 @@
 
 "use strict";
 
+const fs = require("fs");
 const indent = require("indent-string");
+const os = require("os");
+const path = require("path");
+const yaml  = require("js-yaml");
 
 const printer = require("../lib/printer");
 
-process.title = "ppp";
-process.stdin.setEncoding("utf8");
+function readFile(filepath) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(filepath, "utf-8", (err, data) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(data);
+    });
+  });
+}
 
 function readStdin() {
   let buffer = "";
@@ -25,28 +38,82 @@ function readStdin() {
   });
 }
 
-function assertObject(val) {
-  if (typeof val !== "object" || val === null) {
-    throw new TypeError("Unexpected format");
-  }
-}
+process.title = "ppp";
+process.stdin.setEncoding("utf8");
 
-// TODO
-const fields = printer.availableFileds;
+const configPath = path.join(os.homedir(), ".config", "ppp", "config.yml");
+
+const defaultFields = [
+  "name",
+  "version",
+  "description",
+  "license",
+  "author",
+  "homepage",
+  "binaries",
+  "engines",
+  "peerDependencies",
+  "tags",
+];
 
 const wrapSize = 80;
 const indentSize = 2;
 
+function isObject(val) {
+  return typeof val === "object" && val !== null;
+}
+
+async function readConfig(filepath) {
+  let file;
+  try {
+    file = await readFile(filepath);
+  }
+  catch (err) {
+    return {};
+  }
+  let data;
+  try {
+    data = yaml.safeLoad(file);
+  }
+  catch (err) {
+    process.stderr.write("Warning: invalid config format\n");
+    return {};
+  }
+  if (data === null) {
+    return {};
+  }
+  if (!isObject(data)) {
+    process.stderr.write("Warning: invalid config format\n");
+    return {};
+  }
+  return data;
+}
+
+function getFields(conf) {
+  if (!Object.prototype.hasOwnProperty.call(conf, "fields")) {
+    return defaultFields;
+  }
+  const valid = Array.isArray(conf["fields"])
+    && conf["fields"].every(field => typeof field === "string");
+  if (!valid) {
+    throw new TypeError("'fields' must be a list of field names");
+  }
+  return conf["fields"];
+}
+
 async function main() {
+  const conf = await readConfig(configPath);
   const input = await readStdin();
   const data = JSON.parse(input);
-  assertObject(data);
+  if (!isObject(data)) {
+    throw new TypeError("Unexpected format");
+  }
   const pkg = Array.isArray(data) ? data[data.length - 1] : data;
-  assertObject(pkg);
-  const text = indent(
-    printer.print(pkg, fields, wrapSize - indentSize, indentSize),
-    indentSize
-  );
+  if (!isObject(pkg)) {
+    throw new TypeError("Unexpected format");
+  }
+  const fields = getFields(conf);
+  const text = indent(printer.print(pkg, fields, wrapSize - indentSize, indentSize), indentSize);
   process.stdout.write(text + "\n");
 }
 
