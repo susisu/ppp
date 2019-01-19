@@ -2,6 +2,7 @@
 
 "use strict";
 
+const commander = require("commander");
 const fs = require("fs");
 const indent = require("indent-string");
 const os = require("os");
@@ -9,6 +10,7 @@ const path = require("path");
 const yaml  = require("js-yaml");
 
 const printer = require("../lib/printer");
+const thisPkg = require("../package.json");
 
 function readFile(filepath) {
   return new Promise((resolve, reject) => {
@@ -58,6 +60,10 @@ const defaultFields = [
 
 const wrapSize = 80;
 const indentSize = 2;
+
+commander
+  .version(thisPkg["version"], "-v, --version")
+  .parse(process.argv);
 
 function isObject(val) {
   return typeof val === "object" && val !== null;
