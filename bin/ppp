@@ -62,6 +62,7 @@ const defaultWrapSize = 80;
 const indentSize = 2;
 
 commander
+  .description(thisPkg["description"])
   .version(thisPkg["version"], "-v, --version")
   .option("-w, --wrap <int>", "wrap size", parseInt)
   .parse(process.argv);
