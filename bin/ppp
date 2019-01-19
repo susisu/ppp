@@ -105,7 +105,7 @@ async function main() {
   const conf = await readConfig(configPath);
   const input = await readStdin();
   const data = JSON.parse(input);
-  if (!isObject(data)) {
+  if (!isObject(data) || Object.prototype.hasOwnProperty.call(data, "error")) {
     throw new TypeError("Unexpected format");
   }
   const pkg = Array.isArray(data) ? data[data.length - 1] : data;
