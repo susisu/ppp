@@ -26,7 +26,6 @@ function readFile(filepath) {
 
 function readStdin() {
   let buffer = "";
-
   return new Promise((resolve, reject) => {
     process.stdin.on("readable", () => {
       const chunk = process.stdin.read();
@@ -57,16 +56,20 @@ const defaultFields = [
   "peerDependencies",
   "tags",
 ];
-
-const wrapSize = 80;
+const defaultWrapSize = 80;
 const indentSize = 2;
 
 commander
   .version(thisPkg["version"], "-v, --version")
+  .option("-w, --wrap <int>", "wrap size (default = 80)", parseInt)
   .parse(process.argv);
 
 function isObject(val) {
   return typeof val === "object" && val !== null;
+}
+
+function warn(msg) {
+  process.stderr.write(`Warning: ${msg}\n`);
 }
 
 async function readConfig(filepath) {
@@ -82,14 +85,14 @@ async function readConfig(filepath) {
     data = yaml.safeLoad(file);
   }
   catch (err) {
-    process.stderr.write("Warning: invalid config format\n");
+    warn("Invalid config format");
     return {};
   }
   if (data === null) {
     return {};
   }
   if (!isObject(data)) {
-    process.stderr.write("Warning: invalid config format\n");
+    warn("Invalid config format");
     return {};
   }
   return data;
@@ -107,8 +110,26 @@ function getFields(conf) {
   return conf["fields"];
 }
 
+function getWrapSize(conf) {
+  if (commander["wrap"] !== undefined) {
+    if (Number.isNaN(commander["wrap"])) {
+      throw new TypeError("'wrap' must be an integer");
+    }
+    return commander["wrap"] > 0 ? commander["wrap"] : null;
+  }
+  if (!Object.prototype.hasOwnProperty.call(conf, "wrap")) {
+    return defaultWrapSize;
+  }
+  if (typeof conf["wrap"] !== "number") {
+    throw new TypeError("'wrap' must be an integer");
+  }
+  return conf["wrap"] > 0 ? conf["wrap"] : null;
+}
+
 async function main() {
   const conf = await readConfig(configPath);
+  const fields = getFields(conf);
+  const wrapSize = getWrapSize(conf);
   const input = await readStdin();
   const data = JSON.parse(input);
   if (!isObject(data) || Object.prototype.hasOwnProperty.call(data, "error")) {
@@ -118,8 +139,10 @@ async function main() {
   if (!isObject(pkg)) {
     throw new TypeError("Unexpected format");
   }
-  const fields = getFields(conf);
-  const text = indent(printer.print(pkg, fields, wrapSize - indentSize, indentSize), indentSize);
+  const text = indent(
+    printer.print(pkg, fields, wrapSize !== null ? wrapSize - indentSize : null, indentSize),
+    indentSize
+  );
   process.stdout.write(text + "\n");
 }
 
