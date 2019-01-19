@@ -11,7 +11,8 @@
   "scripts": {
     "lint": "eslint lib bin/ppp",
     "fix": "eslint lib bin/ppp --fix",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watchAll"
   },
   "devDependencies": {
     "eslint": "^5.12.0",
