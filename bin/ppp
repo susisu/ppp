@@ -25,12 +25,15 @@ function readFile(filepath) {
 }
 
 function readStdin() {
-  let buffer = "";
   return new Promise((resolve, reject) => {
+    let buffer = "";
+    process.stdin.resume();
+    process.stdin.setEncoding("utf8");
     process.stdin.on("readable", () => {
-      const chunk = process.stdin.read();
-      if (chunk !== null) {
+      let chunk = process.stdin.read();
+      while (chunk !== null) {
         buffer += chunk;
+        chunk = process.stdin.read();
       }
     });
     process.stdin.on("end", () => {
@@ -40,7 +43,6 @@ function readStdin() {
 }
 
 process.title = "ppp";
-process.stdin.setEncoding("utf8");
 
 const configPath = path.join(os.homedir(), ".config", "ppp", "config.yml");
 
