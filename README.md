@@ -1,4 +1,5 @@
 # ppp - package.json pretty printer
+![](https://travis-ci.com/susisu/ppp.svg?branch=master)
 
 ## License
 [MIT License](http://opensource.org/licenses/mit-license.php)
