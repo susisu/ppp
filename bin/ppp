@@ -141,10 +141,8 @@ async function main() {
   if (!isObject(pkg)) {
     throw new TypeError("Unexpected format");
   }
-  const text = indent(
-    printer.print(pkg, fields, wrapSize !== null ? wrapSize - indentSize : null, indentSize),
-    indentSize
-  );
+  const indentedWrapSize = wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null;
+  const text = indent(printer.print(pkg, fields, indentedWrapSize, indentSize), indentSize);
   process.stdout.write(text + "\n");
 }
 
