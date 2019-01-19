@@ -64,7 +64,7 @@ const indentSize = 2;
 commander
   .description(thisPkg["description"])
   .version(thisPkg["version"], "-v, --version")
-  .option("-w, --wrap <int>", "wrap size", parseInt)
+  .option("-w, --wrap <int>", "wrap output to the specified size", parseInt)
   .parse(process.argv);
 
 function isObject(val) {
