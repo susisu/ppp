@@ -25,6 +25,12 @@ function readStdin() {
   });
 }
 
+function assertObject(val) {
+  if (typeof val !== "object" || val === null) {
+    throw new TypeError("Unexpected format");
+  }
+}
+
 // TODO
 const fields = printer.availableFileds;
 
@@ -34,7 +40,9 @@ const indentSize = 2;
 async function main() {
   const input = await readStdin();
   const data = JSON.parse(input);
+  assertObject(data);
   const pkg = Array.isArray(data) ? data[data.length - 1] : data;
+  assertObject(pkg);
   const text = indent(
     printer.print(pkg, fields, wrapSize - indentSize, indentSize),
     indentSize
