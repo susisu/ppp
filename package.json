@@ -5,6 +5,11 @@
   "repository": "https://github.com/susisu/ppp.git",
   "author": "Susisu <susisu2413@yahoo.co.jp>",
   "license": "MIT",
+  "files": [
+    "lib",
+    "!**/__tests__",
+    "bin"
+  ],
   "directories": {
     "bin": "bin"
   },
