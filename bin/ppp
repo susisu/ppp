@@ -27,7 +27,6 @@ function readFile(filepath) {
 function readStdin() {
   return new Promise((resolve, reject) => {
     let buffer = "";
-    process.stdin.resume();
     process.stdin.setEncoding("utf8");
     process.stdin.on("readable", () => {
       let chunk = process.stdin.read();
