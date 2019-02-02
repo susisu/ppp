@@ -94,8 +94,7 @@ function parseNpmResult(result) {
     const summary = data["error"]["summary"];
     if (code && summary) {
       throw new Error(`${code}\n${summary}`);
-    }
-    else {
+    } else {
       throw new TypeError("Unexpected format");
     }
   }
@@ -153,15 +152,13 @@ async function readConfig(filepath) {
   let file;
   try {
     file = await readFile(filepath);
-  }
-  catch (err) {
+  } catch (err) {
     return {};
   }
   let data;
   try {
     data = yaml.safeLoad(file);
-  }
-  catch (err) {
+  } catch (err) {
     warn("Invalid config format");
     return {};
   }
@@ -208,8 +205,7 @@ async function readPackageInfo() {
   const name = commander.args[0];
   if (name !== undefined) {
     data = await npmView(name);
-  }
-  else {
+  } else {
     const input = await readStdin();
     data = parseNpmResult(input);
   }
@@ -249,8 +245,7 @@ async function installedVersion(name, inGlobal) {
     if (typeof version !== "string") {
       version = null;
     }
-  }
-  catch (err) {
+  } catch (err) {
     version = null;
   }
   return version;

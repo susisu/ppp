@@ -76,7 +76,7 @@
 
     "array-bracket-spacing": ["error", "never"],
     "block-spacing": ["error", "always"],
-    "brace-style": ["error", "stroustrup", {
+    "brace-style": ["error", "1tbs", {
       "allowSingleLine": true }],
     "camelcase": ["error", {
       "properties": "never" }],
