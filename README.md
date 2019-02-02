@@ -12,7 +12,7 @@ npm i -g @susisu/ppp
 # show package information on npm
 npm view <pkg> --json | ppp
 # or of a local one
-cat package.json | ppp
+ppp < package.json
 ```
 
 ### Configurations
