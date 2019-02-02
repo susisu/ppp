@@ -110,7 +110,7 @@ function warn(msg) {
 }
 
 function distinct(arr) {
-  return arr.filter((x, i) => arr.indexOf(x) === i);
+  return arr.filter((elem, i) => arr.indexOf(elem) === i);
 }
 
 process.title = "ppp";
@@ -187,15 +187,24 @@ async function readConfig(filepath) {
 
 function getFields(conf) {
   const additionalFields = commander["addField"] || [];
+  let fields;
   if (!conf.hasOwnProperty("fields")) {
-    return distinct(defaultFields.concat(additionalFields));
+    fields = defaultFields;
+  } else {
+    const valid = Array.isArray(conf["fields"])
+      && conf["fields"].every(field => typeof field === "string");
+    if (!valid) {
+      throw new TypeError("'fields' must be a list of field names");
+    }
+    fields = conf["fields"];
   }
-  const valid = Array.isArray(conf["fields"])
-    && conf["fields"].every(field => typeof field === "string");
-  if (!valid) {
-    throw new TypeError("'fields' must be a list of field names");
+  fields = distinct(fields.concat(additionalFields));
+  for (const field of fields) {
+    if (!printer.availableFields.has(field)) {
+      throw new Error(`Unknown field '${field}'`);
+    }
   }
-  return distinct(conf["fields"].concat(additionalFields));
+  return fields;
 }
 
 function getWrapSize(conf) {
