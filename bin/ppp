@@ -67,6 +67,49 @@ function readSubprocess(cmd, args) {
   });
 }
 
+const npmCommand = "npm";
+
+async function npmView(name) {
+  const args = ["view", name, "--json", "--loglevel=silent"];
+  const result = await readSubprocess(npmCommand, args);
+  return parseNpmResult(result);
+}
+
+async function npmLs(name, inGlobal) {
+  const args = ["ls", name, "--depth=0", "--json", "--loglevel=silent"];
+  if (inGlobal) {
+    args.push("--global");
+  }
+  const result = await readSubprocess(npmCommand, args);
+  return parseNpmResult(result);
+}
+
+function parseNpmResult(result) {
+  const data = JSON.parse(result);
+  if (!isObject(data)) {
+    throw new TypeError("Unexpected format");
+  }
+  if (data.hasOwnProperty("error")) {
+    const code = data["error"]["code"];
+    const summary = data["error"]["summary"];
+    if (code && summary) {
+      throw new Error(`${code}\n${summary}`);
+    }
+    else {
+      throw new TypeError("Unexpected format");
+    }
+  }
+  return data;
+}
+
+function isObject(val) {
+  return typeof val === "object" && val !== null;
+}
+
+function warn(msg) {
+  process.stderr.write(`Warning: ${msg}\n`);
+}
+
 process.title = "ppp";
 
 const configPath = path.join(os.homedir(), ".config", "ppp", "config.yml");
@@ -97,23 +140,14 @@ async function main() {
   const conf = await readConfig(configPath);
   const fields = getFields(conf);
   const wrapSize = getWrapSize(conf);
-  const input = await readInput();
-  const pkg = parseInput(input);
-  printInfo(pkg, fields, wrapSize);
+  const pkg = await readPackageInfo();
+  await printInfo(pkg, fields, wrapSize);
 }
 
 main().catch(err => {
   process.stderr.write(String(err) + "\n");
   process.exit(1);
 });
-
-function isObject(val) {
-  return typeof val === "object" && val !== null;
-}
-
-function warn(msg) {
-  process.stderr.write(`Warning: ${msg}\n`);
-}
 
 async function readConfig(filepath) {
   let file;
@@ -169,30 +203,15 @@ function getWrapSize(conf) {
   return conf["wrap"] > 0 ? conf["wrap"] : null;
 }
 
-function readInput() {
+async function readPackageInfo() {
+  let data;
   const name = commander.args[0];
   if (name !== undefined) {
-    return readSubprocess("npm", ["view", name, "--json", "--loglevel=silent"]);
+    data = await npmView(name);
   }
   else {
-    return readStdin();
-  }
-}
-
-function parseInput(input) {
-  const data = JSON.parse(input);
-  if (!isObject(data)) {
-    throw new TypeError("Unexpected format");
-  }
-  if (data.hasOwnProperty("error")) {
-    const code = data["error"]["code"];
-    const summary = data["error"]["summary"];
-    if (code && summary) {
-      throw new Error(`${code}\n${summary}`);
-    }
-    else {
-      throw new TypeError("Unexpected format");
-    }
+    const input = await readStdin();
+    data = parseNpmResult(input);
   }
   const pkg = Array.isArray(data) ? data[data.length - 1] : data;
   if (!isObject(pkg)) {
@@ -201,12 +220,41 @@ function parseInput(input) {
   return pkg;
 }
 
-function printInfo(pkg, fields, wrapSize) {
-  const result = printer.print(
-    pkg,
-    fields,
-    wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null,
-    indentSize
-  );
+async function printInfo(pkg, fields, wrapSize) {
+  const opts = {
+    wrapSize  : wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null,
+    indentSize: indentSize,
+  };
+  const reqs = { installedVersions };
+  const result = await printer.print(pkg, fields, opts, reqs);
   process.stdout.write(indent(result, indentSize) + "\n");
+}
+
+async function installedVersions(name) {
+  let localVersion;
+  try {
+    const ls = await npmLs(name, false);
+    localVersion = ls["dependencies"][name]["version"];
+    if (typeof localVersion !== "string") {
+      localVersion = null;
+    }
+  }
+  catch (err) {
+    localVersion = null;
+  }
+  let globalVersion;
+  try {
+    const ls = await npmLs(name, true);
+    globalVersion = ls["dependencies"][name]["version"];
+    if (typeof globalVersion !== "string") {
+      globalVersion = null;
+    }
+  }
+  catch (err) {
+    globalVersion = null;
+  }
+  return {
+    local : localVersion,
+    global: globalVersion,
+  };
 }

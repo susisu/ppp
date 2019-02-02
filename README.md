@@ -22,6 +22,7 @@ You can place a configuration file at `~/.config/ppp/config.yml` to customize ou
 fields:
   - name
   - version
+  # - installed
   - description
   # - keywords
   - license
