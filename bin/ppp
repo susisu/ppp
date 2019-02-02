@@ -97,10 +97,7 @@ async function main() {
   const fields = getFields(conf);
   const wrapSize = getWrapSize(conf);
   const input = await readInput();
-  const data = JSON.parse(input);
-  if (!isObject(data) || Object.prototype.hasOwnProperty.call(data, "error")) {
-    throw new TypeError("Unexpected format");
-  }
+  const data = parseInput(input);
   const pkg = Array.isArray(data) ? data[data.length - 1] : data;
   if (!isObject(pkg)) {
     throw new TypeError("Unexpected format");
@@ -149,7 +146,7 @@ async function readConfig(filepath) {
 }
 
 function getFields(conf) {
-  if (!Object.prototype.hasOwnProperty.call(conf, "fields")) {
+  if (!conf.hasOwnProperty("fields")) {
     return defaultFields;
   }
   const valid = Array.isArray(conf["fields"])
@@ -167,7 +164,7 @@ function getWrapSize(conf) {
     }
     return commander["wrap"] > 0 ? commander["wrap"] : null;
   }
-  if (!Object.prototype.hasOwnProperty.call(conf, "wrap")) {
+  if (!conf.hasOwnProperty("wrap")) {
     return defaultWrapSize;
   }
   if (typeof conf["wrap"] !== "number") {
@@ -184,4 +181,22 @@ function readInput() {
   else {
     return readStdin();
   }
+}
+
+function parseInput(input) {
+  const data = JSON.parse(input);
+  if (!isObject(data)) {
+    throw new TypeError("Unexpected format");
+  }
+  if (data.hasOwnProperty("error")) {
+    const code = data["error"]["code"];
+    const summary = data["error"]["summary"];
+    if (code && summary) {
+      throw new Error(`${code}\n${summary}`);
+    }
+    else {
+      throw new TypeError("Unexpected format");
+    }
+  }
+  return data;
 }
