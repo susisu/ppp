@@ -109,6 +109,10 @@ function warn(msg) {
   process.stderr.write(`Warning: ${msg}\n`);
 }
 
+function distinct(arr) {
+  return arr.filter((x, i) => arr.indexOf(x) === i);
+}
+
 process.title = "ppp";
 
 const configPath = path.join(os.homedir(), ".config", "ppp", "config.yml");
@@ -128,9 +132,18 @@ const defaultFields = [
 const defaultWrapSize = 80;
 const indentSize = 2;
 
+function collect(val, accum) {
+  if (!accum) {
+    return [val];
+  } else {
+    return accum.concat([val]);
+  }
+}
+
 commander
   .description(thisPkg["description"])
   .version(thisPkg["version"], "-v, --version")
+  .option("-f, --add-field <name>", "append a field (repeatable)", collect)
   .option("-w, --wrap <int>", "wrap output to the specified size", parseInt)
   .arguments("[package]")
   .parse(process.argv);
@@ -173,15 +186,16 @@ async function readConfig(filepath) {
 }
 
 function getFields(conf) {
+  const additionalFields = commander["addField"] || [];
   if (!conf.hasOwnProperty("fields")) {
-    return defaultFields;
+    return distinct(defaultFields.concat(additionalFields));
   }
   const valid = Array.isArray(conf["fields"])
     && conf["fields"].every(field => typeof field === "string");
   if (!valid) {
     throw new TypeError("'fields' must be a list of field names");
   }
-  return conf["fields"];
+  return distinct(conf["fields"].concat(additionalFields));
 }
 
 function getWrapSize(conf) {
