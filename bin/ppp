@@ -55,13 +55,14 @@ function readSubprocess(cmd, args) {
     sub.on("exit", (code, signal) => {
       if (signal !== null) {
         reject(new Error(`process '${cmd}' interrupted by signal: ${signal}`));
+        return;
       }
-      else if (code !== 0) {
+      // also accept code === 1 because it may contain well-formed error information
+      if (code !== 0 && code !== 1) {
         reject(new Error(`process '${cmd}' exited with non-zero code: ${code}`));
+        return;
       }
-      else {
-        resolve(buffer);
-      }
+      resolve(buffer);
     });
   });
 }
