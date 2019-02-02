@@ -98,14 +98,8 @@ async function main() {
   const fields = getFields(conf);
   const wrapSize = getWrapSize(conf);
   const input = await readInput();
-  const data = parseInput(input);
-  const pkg = Array.isArray(data) ? data[data.length - 1] : data;
-  if (!isObject(pkg)) {
-    throw new TypeError("Unexpected format");
-  }
-  const indentedWrapSize = wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null;
-  const text = indent(printer.print(pkg, fields, indentedWrapSize, indentSize), indentSize);
-  process.stdout.write(text + "\n");
+  const pkg = parseInput(input);
+  printInfo(pkg, fields, wrapSize);
 }
 
 main().catch(err => {
@@ -200,5 +194,19 @@ function parseInput(input) {
       throw new TypeError("Unexpected format");
     }
   }
-  return data;
+  const pkg = Array.isArray(data) ? data[data.length - 1] : data;
+  if (!isObject(pkg)) {
+    throw new TypeError("Unexpected format");
+  }
+  return pkg;
+}
+
+function printInfo(pkg, fields, wrapSize) {
+  const result = printer.print(
+    pkg,
+    fields,
+    wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null,
+    indentSize
+  );
+  process.stdout.write(indent(result, indentSize) + "\n");
 }
