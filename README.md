@@ -10,7 +10,7 @@ npm i -g @susisu/ppp
 ## Usage
 ``` shell
 # show package information on npm
-npm view <pkg> --json | ppp
+ppp <pkg>
 # or of a local one
 ppp < package.json
 ```

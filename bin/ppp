@@ -2,6 +2,7 @@
 
 "use strict";
 
+const childProcess = require("child_process");
 const commander = require("commander");
 const fs = require("fs");
 const indent = require("indent-string");
@@ -41,6 +42,30 @@ function readStdin() {
   });
 }
 
+function readSubprocess(cmd, args) {
+  return new Promise((resolve, reject) => {
+    const sub = childProcess.spawn(cmd, args);
+    let buffer = "";
+    sub.stdout.on("data", chunk => {
+      buffer += chunk;
+    });
+    sub.on("error", err => {
+      reject(err);
+    });
+    sub.on("exit", (code, signal) => {
+      if (signal !== null) {
+        reject(new Error(`process '${cmd}' interrupted by signal: ${signal}`));
+      }
+      else if (code !== 0) {
+        reject(new Error(`process '${cmd}' exited with non-zero code: ${code}`));
+      }
+      else {
+        resolve(buffer);
+      }
+    });
+  });
+}
+
 process.title = "ppp";
 
 const configPath = path.join(os.homedir(), ".config", "ppp", "config.yml");
@@ -64,7 +89,30 @@ commander
   .description(thisPkg["description"])
   .version(thisPkg["version"], "-v, --version")
   .option("-w, --wrap <int>", "wrap output to the specified size", parseInt)
+  .arguments("[package]")
   .parse(process.argv);
+
+async function main() {
+  const conf = await readConfig(configPath);
+  const fields = getFields(conf);
+  const wrapSize = getWrapSize(conf);
+  const input = await readInput();
+  const data = JSON.parse(input);
+  if (!isObject(data) || Object.prototype.hasOwnProperty.call(data, "error")) {
+    throw new TypeError("Unexpected format");
+  }
+  const pkg = Array.isArray(data) ? data[data.length - 1] : data;
+  if (!isObject(pkg)) {
+    throw new TypeError("Unexpected format");
+  }
+  const indentedWrapSize = wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null;
+  const text = indent(printer.print(pkg, fields, indentedWrapSize, indentSize), indentSize);
+  process.stdout.write(text + "\n");
+}
+
+main().catch(err => {
+  process.stderr.write(String(err) + "\n");
+});
 
 function isObject(val) {
   return typeof val === "object" && val !== null;
@@ -128,24 +176,12 @@ function getWrapSize(conf) {
   return conf["wrap"] > 0 ? conf["wrap"] : null;
 }
 
-async function main() {
-  const conf = await readConfig(configPath);
-  const fields = getFields(conf);
-  const wrapSize = getWrapSize(conf);
-  const input = await readStdin();
-  const data = JSON.parse(input);
-  if (!isObject(data) || Object.prototype.hasOwnProperty.call(data, "error")) {
-    throw new TypeError("Unexpected format");
+function readInput() {
+  const name = commander.args[0];
+  if (name !== undefined) {
+    return readSubprocess("npm", ["view", name, "--json", "--loglevel=silent"]);
   }
-  const pkg = Array.isArray(data) ? data[data.length - 1] : data;
-  if (!isObject(pkg)) {
-    throw new TypeError("Unexpected format");
+  else {
+    return readStdin();
   }
-  const indentedWrapSize = wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null;
-  const text = indent(printer.print(pkg, fields, indentedWrapSize, indentSize), indentSize);
-  process.stdout.write(text + "\n");
 }
-
-main().catch(err => {
-  process.stderr.write(String(err) + "\n");
-});
