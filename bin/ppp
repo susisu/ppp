@@ -231,30 +231,27 @@ async function printInfo(pkg, fields, wrapSize) {
 }
 
 async function installedVersions(name) {
-  let localVersion;
-  try {
-    const ls = await npmLs(name, false);
-    localVersion = ls["dependencies"][name]["version"];
-    if (typeof localVersion !== "string") {
-      localVersion = null;
-    }
-  }
-  catch (err) {
-    localVersion = null;
-  }
-  let globalVersion;
-  try {
-    const ls = await npmLs(name, true);
-    globalVersion = ls["dependencies"][name]["version"];
-    if (typeof globalVersion !== "string") {
-      globalVersion = null;
-    }
-  }
-  catch (err) {
-    globalVersion = null;
-  }
+  const [localVersion, globalVersion] = await Promise.all([
+    installedVersion(name, false),
+    installedVersion(name, true),
+  ]);
   return {
     local : localVersion,
     global: globalVersion,
   };
+}
+
+async function installedVersion(name, inGlobal) {
+  let version;
+  try {
+    const ls = await npmLs(name, inGlobal);
+    version = ls["dependencies"][name]["version"];
+    if (typeof version !== "string") {
+      version = null;
+    }
+  }
+  catch (err) {
+    version = null;
+  }
+  return version;
 }
