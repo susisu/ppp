@@ -38,6 +38,7 @@ fields:
   - engines
   # - dependencies
   - peerDependencies
+  # - optionalDependencies
   # - devDependencies
   - tags
 wrap: 80
