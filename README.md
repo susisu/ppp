@@ -15,8 +15,12 @@ ppp <pkg>
 ppp < package.json
 ```
 
+### Options
+- `-f, --add-field <name>`: Print an additional field. This option is repeatable. See [Configurations](#configurations) for the list of available field names.
+- `-w, --wrap <int>`: Wrap output to the specified size. This overrides the setting of the [configurations file](#configurations).
+
 ### Configurations
-You can place a configuration file at `~/.config/ppp/config.yml` to customize output fields and text wrapping size. The default configurations are as follows:
+You can place `~/.config/ppp/config.yml` to customize output fields and text wrapping size. The default configurations are as follows:
 
 ``` yaml
 fields:

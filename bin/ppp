@@ -145,7 +145,7 @@ function collect(val, accum) {
 commander
   .description(thisPkg["description"])
   .version(thisPkg["version"], "-v, --version")
-  .option("-f, --add-field <name>", "append a field (repeatable)", collect)
+  .option("-f, --add-field <name>", "print an additional field (repeatable)", collect)
   .option("-w, --wrap <int>", "wrap output to the specified size", parseInt)
   .arguments("[package]")
   .parse(process.argv);
