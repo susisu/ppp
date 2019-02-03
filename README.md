@@ -37,6 +37,8 @@ fields:
   # - types
   - binaries
   - engines
+  - os
+  - cpu
   # - dependencies
   - peerDependencies
   # - optionalDependencies

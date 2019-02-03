@@ -126,6 +126,8 @@ const defaultFields = [
   "homepage",
   "binaries",
   "engines",
+  "os",
+  "cpu",
   "peerDependencies",
   "tags",
 ];
