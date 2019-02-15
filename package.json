@@ -1,6 +1,6 @@
 {
   "name": "@susisu/ppp",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "package.json pretty printer",
   "repository": "https://github.com/susisu/ppp.git",
   "author": "Susisu <susisu2413@yahoo.co.jp>",
@@ -21,7 +21,7 @@
     "lint:fix": "eslint lib bin/ppp --fix",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "prepare": "npm run lint && npm run test"
+    "prepublishOnly": "npm run lint && npm run test"
   },
   "dependencies": {
     "chalk": "^2.4.2",
