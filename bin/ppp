@@ -115,7 +115,10 @@ function distinct(arr) {
 
 process.title = "ppp";
 
-const configPath = path.join(os.homedir(), ".config", "ppp", "config.yml");
+const configPaths = [
+  "config.yaml",
+  "config.yml",
+].map(name => path.join(os.homedir(), ".config", "ppp", name));
 
 const defaultFields = [
   "name",
@@ -151,7 +154,7 @@ commander
   .parse(process.argv);
 
 async function main() {
-  const conf = await readConfig(configPath);
+  const conf = await readConfig(configPaths);
   const fields = getFields(conf);
   const wrapSize = getWrapSize(conf);
   const pkg = await readPackageInfo();
@@ -163,11 +166,15 @@ main().catch(err => {
   process.exit(1);
 });
 
-async function readConfig(filepath) {
+async function readConfig(filepaths) {
   let file;
-  try {
-    file = await readFile(filepath);
-  } catch (err) {
+  for (const filepath of filepaths) {
+    file = await readFileIfExists(filepath);
+    if (file !== undefined) {
+      break;
+    }
+  }
+  if (file === undefined) {
     return {};
   }
   let data;
@@ -185,6 +192,18 @@ async function readConfig(filepath) {
     return {};
   }
   return data;
+}
+
+async function readFileIfExists(filepath) {
+  let file;
+  try {
+    file = await readFile(filepath);
+  } catch (err) {
+    if (err.code !== "ENOENT") {
+      throw err;
+    }
+  }
+  return file;
 }
 
 function getFields(conf) {
