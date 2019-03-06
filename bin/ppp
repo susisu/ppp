@@ -89,7 +89,7 @@ function parseNpmResult(result) {
   if (!isObject(data)) {
     throw new TypeError("Unexpected format");
   }
-  if (data.hasOwnProperty("error")) {
+  if (Object.prototype.hasOwnProperty.call(data, "error")) {
     const code = data["error"]["code"];
     const summary = data["error"]["summary"];
     if (code && summary) {
@@ -209,7 +209,7 @@ async function readFileIfExists(filepath) {
 function getFields(conf) {
   const additionalFields = commander["addField"] || [];
   let fields;
-  if (!conf.hasOwnProperty("fields")) {
+  if (!Object.prototype.hasOwnProperty.call(conf, "fields")) {
     fields = defaultFields;
   } else {
     const valid = Array.isArray(conf["fields"])
@@ -235,7 +235,7 @@ function getWrapSize(conf) {
     }
     return commander["wrap"] > 0 ? commander["wrap"] : null;
   }
-  if (!conf.hasOwnProperty("wrap")) {
+  if (!Object.prototype.hasOwnProperty.call(conf, "wrap")) {
     return defaultWrapSize;
   }
   if (typeof conf["wrap"] !== "number") {
