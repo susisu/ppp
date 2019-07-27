@@ -2,15 +2,16 @@
 
 "use strict";
 
+const difference = require("lodash.difference");
 const childProcess = require("child_process");
 const commander = require("commander");
 const fs = require("fs");
 const indent = require("indent-string");
 const os = require("os");
 const path = require("path");
-const yaml  = require("js-yaml");
 const union = require("lodash.union");
-const difference = require("lodash.difference");
+const yaml  = require("js-yaml");
+const wrap = require("wrap-ansi");
 
 const printer = require("../lib/printer");
 const thisPkg = require("../package.json");
@@ -150,7 +151,16 @@ commander
   .option("-x, --exclude-field <name>", "exclude a field (repeatable)", collect)
   .option("-w, --wrap <int>", "wrap output to the specified size", parseInt)
   .arguments("[package]")
+  .on("--help", printAvailableFields)
   .parse(process.argv);
+
+function printAvailableFields() {
+  process.stdout.write([
+    "",
+    "List of available fields:",
+    indent(wrap([...printer.availableFields].sort().join(", "), 80 - 2), 2),
+  ].join("\n") + "\n");
+}
 
 async function main() {
   const conf = await readConfig(configPaths);
