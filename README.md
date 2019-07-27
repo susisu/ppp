@@ -16,7 +16,8 @@ ppp < package.json
 ```
 
 ### Options
-- `-f, --add-field <name>`: Print an additional field. This option is repeatable. See [Configurations](#configurations) for the list of available field names.
+- `-f, --include-field <name>`: Include an additional field. This option is repeatable. See [Configurations](#configurations) or `-h, --help` for the list of available field names.
+- `-x, --exclude-field <name>`: Exclude a field. This option is repeatable.
 - `-w, --wrap <int>`: Wrap output to the specified size. This overrides the setting of the [configurations file](#configurations).
 
 ### Configurations
