@@ -9,6 +9,8 @@ const indent = require("indent-string");
 const os = require("os");
 const path = require("path");
 const yaml  = require("js-yaml");
+const union = require("lodash.union");
+const difference = require("lodash.difference");
 
 const printer = require("../lib/printer");
 const thisPkg = require("../package.json");
@@ -109,10 +111,6 @@ function warn(msg) {
   process.stderr.write(`Warning: ${msg}\n`);
 }
 
-function distinct(arr) {
-  return arr.filter((elem, i) => arr.indexOf(elem) === i);
-}
-
 process.title = "ppp";
 
 const configPaths = [
@@ -148,7 +146,8 @@ function collect(val, accum) {
 commander
   .description(thisPkg["description"])
   .version(thisPkg["version"], "-v, --version")
-  .option("-f, --add-field <name>", "print an additional field (repeatable)", collect)
+  .option("-f, --include-field <name>", "include a field (repeatable)", collect)
+  .option("-x, --exclude-field <name>", "exclude a field (repeatable)", collect)
   .option("-w, --wrap <int>", "wrap output to the specified size", parseInt)
   .arguments("[package]")
   .parse(process.argv);
@@ -207,7 +206,8 @@ async function readFileIfExists(filepath) {
 }
 
 function getFields(conf) {
-  const additionalFields = commander["addField"] || [];
+  const includedFields = commander["includeField"] || [];
+  const excludedFields = commander["excludeField"] || [];
   let fields;
   if (!Object.prototype.hasOwnProperty.call(conf, "fields")) {
     fields = defaultFields;
@@ -219,7 +219,7 @@ function getFields(conf) {
     }
     fields = conf["fields"];
   }
-  fields = distinct(fields.concat(additionalFields));
+  fields = difference(union(fields, includedFields), excludedFields);
   for (const field of fields) {
     if (!printer.availableFields.has(field)) {
       throw new Error(`Unknown field '${field}'`);
