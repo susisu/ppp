@@ -150,8 +150,8 @@ commander
   .option("-f, --include-field <name>", "include a field (repeatable)", collect)
   .option("-x, --exclude-field <name>", "exclude a field (repeatable)", collect)
   .option("-w, --wrap <int>", "wrap output to the specified size", parseInt)
-  .arguments("[package]")
   .on("--help", printAvailableFields)
+  .arguments("[package]")
   .parse(process.argv);
 
 function printAvailableFields() {
