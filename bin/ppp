@@ -10,7 +10,7 @@ const indent = require("indent-string");
 const os = require("os");
 const path = require("path");
 const union = require("lodash.union");
-const yaml  = require("js-yaml");
+const yaml = require("js-yaml");
 const wrap = require("wrap-ansi");
 
 const printer = require("../lib/printer");
@@ -114,10 +114,9 @@ function warn(msg) {
 
 process.title = "ppp";
 
-const configPaths = [
-  "config.yaml",
-  "config.yml",
-].map(name => path.join(os.homedir(), ".config", "ppp", name));
+const configPaths = ["config.yaml", "config.yml"].map(name =>
+  path.join(os.homedir(), ".config", "ppp", name)
+);
 
 const defaultFields = [
   "name",
@@ -155,11 +154,13 @@ commander
   .parse(process.argv);
 
 function printAvailableFields() {
-  process.stdout.write([
-    "",
-    "List of available fields:",
-    indent(wrap([...printer.availableFields].sort().join(", "), 80 - 2), 2),
-  ].join("\n") + "\n");
+  process.stdout.write(
+    [
+      "",
+      "List of available fields:",
+      indent(wrap([...printer.availableFields].sort().join(", "), 80 - 2), 2),
+    ].join("\n") + "\n"
+  );
 }
 
 async function main() {
@@ -222,8 +223,8 @@ function getFields(conf) {
   if (!Object.prototype.hasOwnProperty.call(conf, "fields")) {
     fields = defaultFields;
   } else {
-    const valid = Array.isArray(conf["fields"])
-      && conf["fields"].every(field => typeof field === "string");
+    const valid =
+      Array.isArray(conf["fields"]) && conf["fields"].every(field => typeof field === "string");
     if (!valid) {
       throw new TypeError("'fields' must be a list of field names");
     }
@@ -272,7 +273,7 @@ async function readPackageInfo() {
 
 async function printInfo(pkg, fields, wrapSize) {
   const opts = {
-    wrapSize  : wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null,
+    wrapSize: wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null,
     indentSize: indentSize,
   };
   const reqs = { installedVersions };
@@ -286,7 +287,7 @@ async function installedVersions(name) {
     installedVersion(name, true),
   ]);
   return {
-    local : localVersion,
+    local: localVersion,
     global: globalVersion,
   };
 }
