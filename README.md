@@ -1,5 +1,5 @@
 # ppp - package.json pretty printer
-![](https://travis-ci.com/susisu/ppp.svg?branch=master)
+[![CI](https://github.com/susisu/ppp/workflows/CI/badge.svg)](https://github.com/susisu/ppp/actions?query=workflow%3ACI)
 
 A package information viewer alternative to [`npm-view`](https://docs.npmjs.com/cli/view.html).
 
