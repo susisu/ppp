@@ -274,7 +274,7 @@ async function readPackageInfo() {
 async function printInfo(pkg, fields, wrapSize) {
   const opts = {
     wrapSize: wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null,
-    indentSize: indentSize,
+    indentSize,
   };
   const reqs = { installedVersions };
   const result = await printer.print(pkg, fields, opts, reqs);
