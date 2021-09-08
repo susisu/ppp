@@ -12,6 +12,7 @@ import wrap from "wrap-ansi";
 
 import { readFileIfExists } from "../lib/files.js";
 import * as printer from "../lib/printer.js";
+import { isObject } from "../lib/utils.js";
 
 function readStdin() {
   return new Promise(resolve => {
@@ -87,10 +88,6 @@ function parseNpmResult(result) {
     }
   }
   return data;
-}
-
-function isObject(val) {
-  return typeof val === "object" && val !== null;
 }
 
 function warn(msg) {
