@@ -1,7 +1,6 @@
 "use strict";
 
 module.exports = {
-  plugins: ["prettier"],
   overrides: [
     {
       files: ["*.js", "bin/*"],
@@ -18,9 +17,6 @@ module.exports = {
       env: {
         es6: true,
         node: true,
-      },
-      rules: {
-        "prettier/prettier": "error",
       },
     },
     {

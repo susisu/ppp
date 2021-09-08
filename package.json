@@ -20,8 +20,12 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "lint": "eslint *.js lib bin/ppp",
-    "lint-fix": "eslint *.js lib bin/ppp --fix",
+    "lint": "run-s lint:eslint lint:prettier",
+    "lint-fix": "run-s lint-fix:eslint lint-fix:prettier",
+    "lint:eslint": "eslint '*.js' lib bin/ppp",
+    "lint-fix:eslint": "eslint --fix '*.js' lib bin/ppp",
+    "lint:prettier": "prettier --check '*.js' lib bin/ppp",
+    "lint-fix:prettier": "prettier --write '*.js' lib bin/ppp",
     "test": "jest",
     "test:watch": "jest --watchAll",
     "prepublishOnly": "run-s lint test"
@@ -44,7 +48,6 @@
     "eslint-plugin-jest": "^24.4.0",
     "eslint-plugin-jest-formatting": "^3.0.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.1.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.3.2"
