@@ -3,7 +3,7 @@
 import difference from "lodash.difference";
 import childProcess from "child_process";
 import commander from "commander";
-import fs from "fs";
+import fs from "fs/promises";
 import indent from "indent-string";
 import os from "os";
 import path from "path";
@@ -12,18 +12,6 @@ import yaml from "js-yaml";
 import wrap from "wrap-ansi";
 
 import * as printer from "../lib/printer.js";
-
-function readFile(filepath) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filepath, "utf-8", (err, data) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve(data);
-    });
-  });
-}
 
 function readStdin() {
   return new Promise(resolve => {
@@ -190,7 +178,7 @@ async function readConfig(filepaths) {
 async function readFileIfExists(filepath) {
   let file;
   try {
-    file = await readFile(filepath);
+    file = await fs.readFile(filepath, "utf-8");
   } catch (err) {
     if (err.code !== "ENOENT") {
       throw err;
