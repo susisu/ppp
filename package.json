@@ -5,6 +5,7 @@
   "repository": "https://github.com/susisu/ppp.git",
   "author": "Susisu <susisu2413@yahoo.co.jp>",
   "license": "MIT",
+  "type": "commonjs",
   "files": [
     "lib",
     "!**/__tests__",
@@ -17,7 +18,7 @@
     "ppp": "bin/ppp"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=12.22.0"
   },
   "scripts": {
     "lint": "run-s lint:eslint lint:prettier",
@@ -26,8 +27,7 @@
     "lint-fix:eslint": "eslint --fix '*.js' lib bin/ppp",
     "lint:prettier": "prettier --check '*.js' lib bin/ppp",
     "lint-fix:prettier": "prettier --write '*.js' lib bin/ppp",
-    "test": "jest",
-    "watch:test": "jest --watchAll",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "prepublishOnly": "run-s lint test"
   },
   "dependencies": {
