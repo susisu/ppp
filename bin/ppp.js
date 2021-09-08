@@ -3,7 +3,7 @@
 import difference from "lodash.difference";
 import childProcess from "child_process";
 import commander from "commander";
-import fs from "fs/promises";
+import fs from "fs";
 import indent from "indent-string";
 import os from "os";
 import path from "path";
@@ -178,7 +178,7 @@ async function readConfig(filepaths) {
 async function readFileIfExists(filepath) {
   let file;
   try {
-    file = await fs.readFile(filepath, "utf-8");
+    file = await fs.promises.readFile(filepath, "utf-8");
   } catch (err) {
     if (err.code !== "ENOENT") {
       throw err;
