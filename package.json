@@ -20,8 +20,8 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "lint": "eslint lib bin/ppp",
-    "lint:fix": "eslint lib bin/ppp --fix",
+    "lint": "eslint *.js lib bin/ppp",
+    "lint-fix": "eslint *.js lib bin/ppp --fix",
     "test": "jest",
     "test:watch": "jest --watchAll",
     "prepublishOnly": "run-s lint test"

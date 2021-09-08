@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-  collectCoverage    : true,
+  collectCoverage: true,
   collectCoverageFrom: ["lib/**/*.js", "!**/*.test.js"],
-  testEnvironment    : "node",
+  testEnvironment: "node",
 };
