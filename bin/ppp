@@ -175,7 +175,7 @@ async function readConfig(filepaths) {
   }
   let data;
   try {
-    data = yaml.safeLoad(file);
+    data = yaml.load(file);
   } catch (err) {
     warn("Invalid config format");
     return {};
