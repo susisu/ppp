@@ -11,7 +11,7 @@ import union from "lodash.union";
 import yaml from "js-yaml";
 import wrap from "wrap-ansi";
 
-import printer from "../lib/printer.js";
+import * as printer from "../lib/printer.mjs";
 
 function readFile(filepath) {
   return new Promise((resolve, reject) => {
