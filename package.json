@@ -27,7 +27,7 @@
     "lint:prettier": "prettier --check '*.js' lib bin/ppp",
     "lint-fix:prettier": "prettier --write '*.js' lib bin/ppp",
     "test": "jest",
-    "test:watch": "jest --watchAll",
+    "watch:test": "jest --watchAll",
     "prepublishOnly": "run-s lint test"
   },
   "dependencies": {

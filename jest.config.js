@@ -1,7 +1,10 @@
 "use strict";
 
 module.exports = {
-  collectCoverage: true,
-  collectCoverageFrom: ["lib/**/*.js", "!**/*.test.js"],
+  roots: ["./lib"],
+  testMatch: ["**/*.{test,spec}.js"],
   testEnvironment: "node",
+  collectCoverage: true,
+  collectCoverageFrom: ["./lib/**/*.js", "!./lib/**/*.{test,spec}.js"],
+  coverageDirectory: "coverage",
 };
