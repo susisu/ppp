@@ -3,7 +3,7 @@
 module.exports = {
   overrides: [
     {
-      files: ["*.{js,mjs}", "bin/*"],
+      files: ["*.{js,mjs}"],
       extends: [
         "@susisu/eslint-config/preset/es",
         "prettier",
@@ -19,7 +19,7 @@ module.exports = {
       },
     },
     {
-      files: ["*.js", "bin/*"],
+      files: ["*.js"],
       parserOptions: {
         sourceType: "script",
       },

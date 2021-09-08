@@ -11,11 +11,8 @@
     "!**/__tests__",
     "bin"
   ],
-  "directories": {
-    "bin": "bin"
-  },
   "bin": {
-    "ppp": "bin/ppp"
+    "ppp": "bin/ppp.js"
   },
   "engines": {
     "node": ">=12.22.0"
@@ -23,10 +20,10 @@
   "scripts": {
     "lint": "run-s lint:eslint lint:prettier",
     "lint-fix": "run-s lint-fix:eslint lint-fix:prettier",
-    "lint:eslint": "eslint '*.js' lib bin/ppp",
-    "lint-fix:eslint": "eslint --fix '*.js' lib bin/ppp",
-    "lint:prettier": "prettier --check '*.js' lib bin/ppp",
-    "lint-fix:prettier": "prettier --write '*.js' lib bin/ppp",
+    "lint:eslint": "eslint '*.js' lib bin",
+    "lint-fix:eslint": "eslint --fix '*.js' lib bin",
+    "lint:prettier": "prettier --check '*.js' lib bin",
+    "lint-fix:prettier": "prettier --write '*.js' lib bin",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "prepublishOnly": "run-s lint test"
   },
