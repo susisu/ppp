@@ -196,12 +196,12 @@ function getFields(conf) {
 }
 
 function getWrapSize(conf) {
-  const wrap = commander.getOptionValue("wrap");
-  if (wrap !== undefined) {
-    if (Number.isNaN(wrap)) {
+  const wrapSize = commander.getOptionValue("wrap");
+  if (wrapSize !== undefined) {
+    if (Number.isNaN(wrapSize)) {
       throw new TypeError("'wrap' must be an integer");
     }
-    return wrap > 0 ? wrap : null;
+    return wrapSize > 0 ? wrapSize : null;
   }
   if (!Object.prototype.hasOwnProperty.call(conf, "wrap")) {
     return defaultWrapSize;
