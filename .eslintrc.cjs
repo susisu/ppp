@@ -3,7 +3,7 @@
 module.exports = {
   overrides: [
     {
-      files: ["*.{js,cjs,mjs}"],
+      files: ["*.{js,cjs}"],
       extends: [
         "@susisu/eslint-config/preset/es",
         "prettier",
@@ -25,13 +25,13 @@ module.exports = {
       },
     },
     {
-      files: ["*.{js,mjs}"],
+      files: ["*.js"],
       parserOptions: {
         sourceType: "module",
       },
     },
     {
-      files: ["*.{test,spec}.{js,cjs,mjs}", "lib/**/__tests__/**/*.{js,cjs,mjs}"],
+      files: ["*.{test,spec}.{js,cjs}", "lib/**/__tests__/**/*.{js,cjs}"],
       extends: ["plugin:jest/recommended", "plugin:jest-formatting/recommended"],
       env: {
         "jest/globals": true,
