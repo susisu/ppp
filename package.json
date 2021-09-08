@@ -8,8 +8,8 @@
   "type": "module",
   "files": [
     "lib",
-    "!**/__tests__",
-    "bin"
+    "bin",
+    "!**/*.spec.js"
   ],
   "bin": {
     "ppp": "bin/ppp.js"
