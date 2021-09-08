@@ -1,20 +1,17 @@
 #!/usr/bin/env node
 
-"use strict";
+import difference from "lodash.difference";
+import childProcess from "child_process";
+import commander from "commander";
+import fs from "fs";
+import indent from "indent-string";
+import os from "os";
+import path from "path";
+import union from "lodash.union";
+import yaml from "js-yaml";
+import wrap from "wrap-ansi";
 
-const difference = require("lodash.difference");
-const childProcess = require("child_process");
-const commander = require("commander");
-const fs = require("fs");
-const indent = require("indent-string");
-const os = require("os");
-const path = require("path");
-const union = require("lodash.union");
-const yaml = require("js-yaml");
-const wrap = require("wrap-ansi");
-
-const printer = require("../lib/printer");
-const thisPkg = require("../package.json");
+import printer from "../lib/printer.js";
 
 function readFile(filepath) {
   return new Promise((resolve, reject) => {
@@ -140,9 +137,9 @@ List of available fields:
 ${indent(wrap([...printer.availableFields].sort().join(", "), 80 - 2), 2)}`;
 
 commander
-  .description(thisPkg["description"])
+  .description("package.json pretty printer")
   .addHelpText("after", availableFieldsText)
-  .version(thisPkg["version"], "-v, --version")
+  .version("0.0.6", "-v, --version")
   .option("-f, --include-field <name>", "include a field (repeatable)", (x, xs) => xs.concat(x), [])
   .option("-x, --exclude-field <name>", "exclude a field (repeatable)", (x, xs) => xs.concat(x), [])
   .option("-w, --wrap <int>", "wrap output to the specified size", x => parseInt(x, 10), undefined)

@@ -12,7 +12,7 @@
     "bin"
   ],
   "bin": {
-    "ppp": "bin/ppp.js"
+    "ppp": "bin/ppp.mjs"
   },
   "engines": {
     "node": ">=12.22.0"
