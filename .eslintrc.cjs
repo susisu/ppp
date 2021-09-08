@@ -3,7 +3,7 @@
 module.exports = {
   overrides: [
     {
-      files: ["*.js", "bin/*"],
+      files: ["*.{js,cjs}"],
       extends: [
         "@susisu/eslint-config/preset/es",
         "prettier",
@@ -12,7 +12,6 @@ module.exports = {
       ],
       parserOptions: {
         ecmaVersion: 2020,
-        sourceType: "script",
       },
       env: {
         es6: true,
@@ -20,7 +19,19 @@ module.exports = {
       },
     },
     {
-      files: ["*.{test,spec}.js", "src/**/__tests__/**/*.js"],
+      files: ["*.cjs"],
+      parserOptions: {
+        sourceType: "script",
+      },
+    },
+    {
+      files: ["*.js"],
+      parserOptions: {
+        sourceType: "module",
+      },
+    },
+    {
+      files: ["*.{test,spec}.js", "lib/**/__tests__/**/*js"],
       extends: ["plugin:jest/recommended", "plugin:jest-formatting/recommended"],
       env: {
         "jest/globals": true,
