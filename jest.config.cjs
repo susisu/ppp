@@ -2,9 +2,9 @@
 
 module.exports = {
   roots: ["./lib"],
-  testMatch: ["**/*.{test,spec}.js"],
+  testMatch: ["**/*.spec.js"],
   testEnvironment: "node",
   collectCoverage: true,
-  collectCoverageFrom: ["./lib/**/*.js", "!./lib/**/*.{test,spec}.js"],
+  collectCoverageFrom: ["./lib/**/*.js", "!./lib/**/*.spec.js"],
   coverageDirectory: "coverage",
 };

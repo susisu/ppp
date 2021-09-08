@@ -31,7 +31,7 @@ module.exports = {
       },
     },
     {
-      files: ["*.{test,spec}.js", "lib/**/__tests__/**/*js"],
+      files: ["*.spec.js", "lib/**/__tests__/**/*.js"],
       extends: ["plugin:jest/recommended", "plugin:jest-formatting/recommended"],
       env: {
         "jest/globals": true,
