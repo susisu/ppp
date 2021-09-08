@@ -135,33 +135,19 @@ const defaultFields = [
 const defaultWrapSize = 80;
 const indentSize = 2;
 
-function collect(val, accum) {
-  if (!accum) {
-    return [val];
-  } else {
-    return accum.concat([val]);
-  }
-}
+const availableFieldsText = `
+List of available fields:
+${indent(wrap([...printer.availableFields].sort().join(", "), 80 - 2), 2)}`;
 
 commander
   .description(thisPkg["description"])
+  .addHelpText("after", availableFieldsText)
   .version(thisPkg["version"], "-v, --version")
-  .option("-f, --include-field <name>", "include a field (repeatable)", collect)
-  .option("-x, --exclude-field <name>", "exclude a field (repeatable)", collect)
-  .option("-w, --wrap <int>", "wrap output to the specified size", parseInt)
-  .on("--help", printAvailableFields)
+  .option("-f, --include-field <name>", "include a field (repeatable)", (x, xs) => xs.concat(x), [])
+  .option("-x, --exclude-field <name>", "exclude a field (repeatable)", (x, xs) => xs.concat(x), [])
+  .option("-w, --wrap <int>", "wrap output to the specified size", x => parseInt(x, 10), undefined)
   .arguments("[package]")
-  .parse(process.argv);
-
-function printAvailableFields() {
-  process.stdout.write(
-    [
-      "",
-      "List of available fields:",
-      indent(wrap([...printer.availableFields].sort().join(", "), 80 - 2), 2),
-    ].join("\n") + "\n"
-  );
-}
+  .parse();
 
 async function main() {
   const conf = await readConfig(configPaths);
@@ -217,8 +203,8 @@ async function readFileIfExists(filepath) {
 }
 
 function getFields(conf) {
-  const includedFields = commander["includeField"] || [];
-  const excludedFields = commander["excludeField"] || [];
+  const includedFields = commander.getOptionValue("includeField");
+  const excludedFields = commander.getOptionValue("excludeField");
   let fields;
   if (!Object.prototype.hasOwnProperty.call(conf, "fields")) {
     fields = defaultFields;
@@ -240,11 +226,12 @@ function getFields(conf) {
 }
 
 function getWrapSize(conf) {
-  if (commander["wrap"] !== undefined) {
-    if (Number.isNaN(commander["wrap"])) {
+  const wrap = commander.getOptionValue("wrap");
+  if (wrap !== undefined) {
+    if (Number.isNaN(wrap)) {
       throw new TypeError("'wrap' must be an integer");
     }
-    return commander["wrap"] > 0 ? commander["wrap"] : null;
+    return wrap > 0 ? wrap : null;
   }
   if (!Object.prototype.hasOwnProperty.call(conf, "wrap")) {
     return defaultWrapSize;
@@ -257,7 +244,7 @@ function getWrapSize(conf) {
 
 async function readPackageInfo() {
   let data;
-  const name = commander.args[0];
+  const name = commander.processedArgs[0];
   if (name !== undefined) {
     data = await npmView(name);
   } else {
