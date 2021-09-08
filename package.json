@@ -5,7 +5,7 @@
   "repository": "https://github.com/susisu/ppp.git",
   "author": "Susisu <susisu2413@yahoo.co.jp>",
   "license": "MIT",
-  "type": "commonjs",
+  "type": "module",
   "files": [
     "lib",
     "!**/__tests__",

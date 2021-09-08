@@ -19,13 +19,13 @@ module.exports = {
       },
     },
     {
-      files: ["*.{js,cjs}"],
+      files: ["*.cjs"],
       parserOptions: {
         sourceType: "script",
       },
     },
     {
-      files: ["*.mjs"],
+      files: ["*.{js,mjs}"],
       parserOptions: {
         sourceType: "module",
       },
