@@ -10,7 +10,7 @@ import yaml from "js-yaml";
 import wrap from "wrap-ansi";
 
 import { readFileIfExists } from "../lib/files.js";
-import { npmLs, npmView, parseNpmOutput } from "../lib/npm.js";
+import { npm, parseNpmOutput } from "../lib/npm.js";
 import * as printer from "../lib/printer.js";
 import { isObject } from "../lib/utils.js";
 
@@ -157,7 +157,7 @@ async function readPackageInfo() {
   let data;
   const name = commander.processedArgs[0];
   if (name !== undefined) {
-    data = await npmView(name);
+    data = await npm.view(name);
   } else {
     const input = await readStdin();
     data = parseNpmOutput(input);
@@ -193,7 +193,7 @@ async function installedVersions(name) {
 async function installedVersion(name, global) {
   let version;
   try {
-    const ls = await npmLs(name, global);
+    const ls = await npm.ls(name, global);
     version = ls["dependencies"][name]["version"];
     if (typeof version !== "string") {
       version = null;
