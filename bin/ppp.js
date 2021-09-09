@@ -11,7 +11,7 @@ import wrap from "wrap-ansi";
 import { loadConfig } from "../lib/config.js";
 import { npm } from "../lib/npm.js";
 import * as printer from "../lib/printer.js";
-import { isObject } from "../lib/utils.js";
+import { isArray, isObject } from "../lib/utils.js";
 
 process.title = "ppp";
 
@@ -77,7 +77,7 @@ function getFields(conf) {
     fields = defaultFields;
   } else {
     const valid =
-      Array.isArray(conf["fields"]) && conf["fields"].every(field => typeof field === "string");
+      isArray(conf["fields"]) && conf["fields"].every(field => typeof field === "string");
     if (!valid) {
       throw new TypeError("'fields' must be a list of field names");
     }
@@ -112,7 +112,7 @@ function getWrapSize(conf) {
 async function readPackageInfo() {
   const name = commander.processedArgs[0];
   const data = name !== undefined ? await npm.view(name) : await npm.stdin();
-  const pkg = Array.isArray(data) ? data[data.length - 1] : data;
+  const pkg = isArray(data) ? data[data.length - 1] : data;
   if (!isObject(pkg)) {
     throw new TypeError("Unexpected format");
   }
