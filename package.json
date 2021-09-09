@@ -38,6 +38,7 @@
     "wrap-ansi": "^8.0.0"
   },
   "devDependencies": {
+    "@jest/globals": "^27.1.1",
     "@susisu/eslint-config": "^0.0.39",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",

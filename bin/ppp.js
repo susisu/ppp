@@ -174,32 +174,6 @@ async function printInfo(pkg, fields, wrapSize) {
     wrapSize: wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null,
     indentSize,
   };
-  const reqs = { installedVersions };
-  const result = await printer.print(pkg, fields, opts, reqs);
+  const result = await printer.print(pkg, fields, opts, npm);
   process.stdout.write(indent(result, indentSize) + "\n");
-}
-
-async function installedVersions(name) {
-  const [localVersion, globalVersion] = await Promise.all([
-    installedVersion(name, false),
-    installedVersion(name, true),
-  ]);
-  return {
-    local: localVersion,
-    global: globalVersion,
-  };
-}
-
-async function installedVersion(name, global) {
-  let version;
-  try {
-    const ls = await npm.ls(name, global);
-    version = ls["dependencies"][name]["version"];
-    if (typeof version !== "string") {
-      version = null;
-    }
-  } catch (err) {
-    version = null;
-  }
-  return version;
 }
