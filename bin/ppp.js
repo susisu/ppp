@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import difference from "lodash.difference";
-import childProcess from "child_process";
 import commander from "commander";
 import indent from "indent-string";
 import os from "os";
@@ -11,6 +10,7 @@ import yaml from "js-yaml";
 import wrap from "wrap-ansi";
 
 import { readFileIfExists } from "../lib/files.js";
+import { npmLs, npmView, parseNpmResult } from "../lib/npm.js";
 import * as printer from "../lib/printer.js";
 import { isObject } from "../lib/utils.js";
 
@@ -29,65 +29,6 @@ function readStdin() {
       resolve(buffer);
     });
   });
-}
-
-function readSubprocess(cmd, args) {
-  return new Promise((resolve, reject) => {
-    const sub = childProcess.spawn(cmd, args);
-    let buffer = "";
-    sub.stdout.on("data", chunk => {
-      buffer += chunk;
-    });
-    sub.on("error", err => {
-      reject(err);
-    });
-    sub.on("exit", (code, signal) => {
-      if (signal !== null) {
-        reject(new Error(`process '${cmd}' interrupted by signal: ${signal}`));
-        return;
-      }
-      // also accept code === 1 because it may contain well-formed error information
-      if (code !== 0 && code !== 1) {
-        reject(new Error(`process '${cmd}' exited with non-zero code: ${code}`));
-        return;
-      }
-      resolve(buffer);
-    });
-  });
-}
-
-const npmCommand = "npm";
-
-async function npmView(name) {
-  const args = ["view", name, "--json", "--loglevel=silent"];
-  const result = await readSubprocess(npmCommand, args);
-  return parseNpmResult(result);
-}
-
-async function npmLs(name, inGlobal) {
-  const args = ["ls", name, "--depth=0", "--json", "--loglevel=silent"];
-  if (inGlobal) {
-    args.push("--global");
-  }
-  const result = await readSubprocess(npmCommand, args);
-  return parseNpmResult(result);
-}
-
-function parseNpmResult(result) {
-  const data = JSON.parse(result);
-  if (!isObject(data)) {
-    throw new TypeError("Unexpected format");
-  }
-  if (Object.prototype.hasOwnProperty.call(data, "error")) {
-    const code = data["error"]["code"];
-    const summary = data["error"]["summary"];
-    if (code && summary) {
-      throw new Error(`${code}\n${summary}`);
-    } else {
-      throw new TypeError("Unexpected format");
-    }
-  }
-  return data;
 }
 
 function warn(msg) {
@@ -249,10 +190,10 @@ async function installedVersions(name) {
   };
 }
 
-async function installedVersion(name, inGlobal) {
+async function installedVersion(name, global) {
   let version;
   try {
-    const ls = await npmLs(name, inGlobal);
+    const ls = await npmLs(name, global);
     version = ls["dependencies"][name]["version"];
     if (typeof version !== "string") {
       version = null;
