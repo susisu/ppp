@@ -10,7 +10,7 @@ import yaml from "js-yaml";
 import wrap from "wrap-ansi";
 
 import { readFileIfExists } from "../lib/files.js";
-import { npmLs, npmView, parseNpmResult } from "../lib/npm.js";
+import { npmLs, npmView, parseNpmOutput } from "../lib/npm.js";
 import * as printer from "../lib/printer.js";
 import { isObject } from "../lib/utils.js";
 
@@ -160,7 +160,7 @@ async function readPackageInfo() {
     data = await npmView(name);
   } else {
     const input = await readStdin();
-    data = parseNpmResult(input);
+    data = parseNpmOutput(input);
   }
   const pkg = Array.isArray(data) ? data[data.length - 1] : data;
   if (!isObject(pkg)) {
