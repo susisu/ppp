@@ -59,8 +59,8 @@ async function main() {
   const conf = await loadConfig();
   const fields = getFields(conf);
   const wrapSize = getWrapSize(conf);
-  const pkg = await readPackageInfo();
-  await printInfo(pkg, fields, wrapSize);
+  const pkg = await fetchPackage();
+  await printPackage(pkg, fields, wrapSize);
 }
 
 async function loadConfig() {
@@ -104,7 +104,7 @@ function getWrapSize(conf) {
   return conf["wrap"] > 0 ? conf["wrap"] : null;
 }
 
-async function readPackageInfo() {
+async function fetchPackage() {
   const name = commander.processedArgs[0];
   const data = name !== undefined ? await npm.view(name) : await npm.stdin();
   const pkg = isArray(data) ? data[data.length - 1] : data;
@@ -114,11 +114,11 @@ async function readPackageInfo() {
   return pkg;
 }
 
-async function printInfo(pkg, fields, wrapSize) {
+async function printPackage(pkg, fields, wrapSize) {
   const opts = {
     wrapSize: wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null,
     indentSize,
   };
-  const result = await printer.print(pkg, fields, opts, npm);
-  process.stdout.write(indent(result, indentSize) + "\n");
+  const text = await printer.print(pkg, fields, opts, npm);
+  process.stdout.write(indent(text, indentSize) + "\n");
 }
