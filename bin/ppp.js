@@ -9,26 +9,9 @@ import union from "lodash.union";
 import wrap from "wrap-ansi";
 
 import { loadConfig } from "../lib/config.js";
-import { npm, parseNpmOutput } from "../lib/npm.js";
+import { npm } from "../lib/npm.js";
 import * as printer from "../lib/printer.js";
 import { isObject } from "../lib/utils.js";
-
-function readStdin() {
-  return new Promise(resolve => {
-    let buffer = "";
-    process.stdin.setEncoding("utf8");
-    process.stdin.on("readable", () => {
-      let chunk = process.stdin.read();
-      while (chunk !== null) {
-        buffer += chunk;
-        chunk = process.stdin.read();
-      }
-    });
-    process.stdin.on("end", () => {
-      resolve(buffer);
-    });
-  });
-}
 
 process.title = "ppp";
 
@@ -127,14 +110,8 @@ function getWrapSize(conf) {
 }
 
 async function readPackageInfo() {
-  let data;
   const name = commander.processedArgs[0];
-  if (name !== undefined) {
-    data = await npm.view(name);
-  } else {
-    const input = await readStdin();
-    data = parseNpmOutput(input);
-  }
+  const data = name !== undefined ? await npm.view(name) : await npm.stdin();
   const pkg = Array.isArray(data) ? data[data.length - 1] : data;
   if (!isObject(pkg)) {
     throw new TypeError("Unexpected format");
