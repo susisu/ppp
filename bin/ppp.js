@@ -6,10 +6,9 @@ import indent from "indent-string";
 import os from "os";
 import path from "path";
 import union from "lodash.union";
-import yaml from "js-yaml";
 import wrap from "wrap-ansi";
 
-import { readFileIfExists } from "../lib/files.js";
+import { loadConfig } from "../lib/config.js";
 import { npm, parseNpmOutput } from "../lib/npm.js";
 import * as printer from "../lib/printer.js";
 import { isObject } from "../lib/utils.js";
@@ -29,10 +28,6 @@ function readStdin() {
       resolve(buffer);
     });
   });
-}
-
-function warn(msg) {
-  process.stderr.write(`Warning: ${msg}\n`);
 }
 
 process.title = "ppp";
@@ -73,7 +68,13 @@ commander
   .parse();
 
 async function main() {
-  const conf = await readConfig(configPaths);
+  let conf;
+  try {
+    conf = await loadConfig(configPaths);
+  } catch (err) {
+    process.stderr.write(`Warning: failed to load config: ${String(err)}\n`);
+    conf = {};
+  }
   const fields = getFields(conf);
   const wrapSize = getWrapSize(conf);
   const pkg = await readPackageInfo();
@@ -84,34 +85,6 @@ main().catch(err => {
   process.stderr.write(String(err) + "\n");
   process.exitCode = 1;
 });
-
-async function readConfig(filepaths) {
-  let file;
-  for (const filepath of filepaths) {
-    file = await readFileIfExists(filepath);
-    if (file !== undefined) {
-      break;
-    }
-  }
-  if (file === undefined) {
-    return {};
-  }
-  let data;
-  try {
-    data = yaml.load(file);
-  } catch {
-    warn("Invalid config format");
-    return {};
-  }
-  if (data === null) {
-    return {};
-  }
-  if (!isObject(data)) {
-    warn("Invalid config format");
-    return {};
-  }
-  return data;
-}
 
 function getFields(conf) {
   const includedFields = commander.getOptionValue("includeField");
