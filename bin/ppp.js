@@ -8,7 +8,7 @@ import path from "path";
 import union from "lodash.union";
 import wrap from "wrap-ansi";
 
-import { loadConfig } from "../lib/config.js";
+import * as config from "../lib/config.js";
 import { npm } from "../lib/npm.js";
 import * as printer from "../lib/printer.js";
 import { isArray, isObject } from "../lib/utils.js";
@@ -50,39 +50,34 @@ commander
   .arguments("[package]")
   .parse();
 
+main().catch(err => {
+  process.stderr.write(String(err) + "\n");
+  process.exitCode = 1;
+});
+
 async function main() {
-  let conf;
-  try {
-    conf = await loadConfig(configPaths);
-  } catch (err) {
-    process.stderr.write(`Warning: failed to load config: ${String(err)}\n`);
-    conf = {};
-  }
+  const conf = await loadConfig();
   const fields = getFields(conf);
   const wrapSize = getWrapSize(conf);
   const pkg = await readPackageInfo();
   await printInfo(pkg, fields, wrapSize);
 }
 
-main().catch(err => {
-  process.stderr.write(String(err) + "\n");
-  process.exitCode = 1;
-});
+async function loadConfig() {
+  let conf;
+  try {
+    conf = await config.load(configPaths);
+  } catch (err) {
+    process.stderr.write(`Warning: failed to load config: ${String(err)}\n`);
+    conf = {};
+  }
+  return conf;
+}
 
 function getFields(conf) {
   const includedFields = commander.getOptionValue("includeField");
   const excludedFields = commander.getOptionValue("excludeField");
-  let fields;
-  if (!Object.prototype.hasOwnProperty.call(conf, "fields")) {
-    fields = defaultFields;
-  } else {
-    const valid =
-      isArray(conf["fields"]) && conf["fields"].every(field => typeof field === "string");
-    if (!valid) {
-      throw new TypeError("'fields' must be a list of field names");
-    }
-    fields = conf["fields"];
-  }
+  let fields = config.getFields(conf) || defaultFields;
   fields = difference(union(fields, includedFields), excludedFields);
   for (const field of fields) {
     if (!printer.availableFields.has(field)) {
