@@ -1,18 +1,16 @@
 #!/usr/bin/env node
 
-import difference from "lodash.difference";
 import commander from "commander";
 import indent from "indent-string";
 import os from "os";
 import path from "path";
-import union from "lodash.union";
 import wrap from "wrap-ansi";
 
 import * as config from "../lib/config.js";
 import { npm } from "../lib/npm.js";
 import * as options from "../lib/options.js";
 import * as printer from "../lib/printer.js";
-import { isArray, isObject } from "../lib/utils.js";
+import { isObject, isArray, union, difference } from "../lib/utils.js";
 
 process.title = "ppp";
 
