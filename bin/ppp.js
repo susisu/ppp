@@ -80,11 +80,7 @@ function getFields(conf) {
   const excludedFields = commander.getOptionValue("excludeField");
   let fields = config.getFields(conf) || defaultFields;
   fields = difference(union(fields, includedFields), excludedFields);
-  for (const field of fields) {
-    if (!printer.availableFields.has(field)) {
-      throw new Error(`Unknown field '${field}'`);
-    }
-  }
+  printer.validateFields(fields);
   return fields;
 }
 
