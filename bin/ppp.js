@@ -10,6 +10,7 @@ import wrap from "wrap-ansi";
 
 import * as config from "../lib/config.js";
 import { npm } from "../lib/npm.js";
+import * as options from "../lib/options.js";
 import * as printer from "../lib/printer.js";
 import { isArray, isObject } from "../lib/utils.js";
 
@@ -46,7 +47,7 @@ commander
   .version("0.0.6", "-v, --version")
   .option("-f, --include-field <name>", "include a field (repeatable)", (x, xs) => xs.concat(x), [])
   .option("-x, --exclude-field <name>", "exclude a field (repeatable)", (x, xs) => xs.concat(x), [])
-  .option("-w, --wrap <int>", "wrap output to the specified size", x => parseInt(x, 10), undefined)
+  .option("-w, --wrap <int>", "wrap output to the specified size")
   .arguments("[package]")
   .parse();
 
@@ -88,12 +89,9 @@ function getFields(conf) {
 }
 
 function getWrapSize(conf) {
-  let wrapSize = commander.getOptionValue("wrap");
+  let wrapSize = options.getWrapSize(commander.getOptionValue("wrap"));
   if (wrapSize !== undefined) {
-    if (Number.isNaN(wrapSize)) {
-      throw new TypeError("'wrap' must be an integer");
-    }
-    return wrapSize > 0 ? wrapSize : null;
+    return wrapSize;
   }
   wrapSize = config.getWrapSize(conf);
   if (wrapSize !== undefined) {
