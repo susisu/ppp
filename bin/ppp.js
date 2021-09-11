@@ -43,8 +43,8 @@ commander
   .description("package.json pretty printer")
   .addHelpText("after", availableFieldsText)
   .version("0.0.6", "-v, --version")
-  .option("-f, --include-field <name>", "include a field (repeatable)", (x, xs) => xs.concat(x), [])
-  .option("-x, --exclude-field <name>", "exclude a field (repeatable)", (x, xs) => xs.concat(x), [])
+  .option("-f, --include-field <name>", "include a field (repeatable)", (x, xs) => [...xs, x], [])
+  .option("-x, --exclude-field <name>", "exclude a field (repeatable)", (x, xs) => [...xs, x], [])
   .option("-w, --wrap <int>", "wrap output to the specified size")
   .arguments("[package]")
   .parse();
