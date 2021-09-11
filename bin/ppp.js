@@ -29,21 +29,20 @@ commander
   .option("-x, --exclude-field <name>", "exclude a field (repeatable)", (x, xs) => [...xs, x], [])
   .option("-w, --wrap <int>", "wrap output to the specified size", undefined)
   .arguments("[package]")
-  .parse();
+  .action(async (name, opts) => {
+    const conf = await loadConfig();
+    const fields = getFields(conf, opts);
+    const wrapSize = getWrapSize(conf, opts);
+    const pkg = await fetchPackage(name);
+    await printPackage(pkg, fields, wrapSize);
+  })
+  .parseAsync()
+  .catch(err => {
+    process.stderr.write(`Error: ${err.message}\n`);
+    process.exitCode = 1;
+  });
 
-main().catch(err => {
-  process.stderr.write(`Error: ${err.message}\n`);
-  process.exitCode = 1;
-});
-
-async function main() {
-  const opts = {
-    includeField: commander.getOptionValue("includeField"),
-    excludeField: commander.getOptionValue("excludeField"),
-    wrap: commander.getOptionValue("wrap"),
-  };
-  const args = commander.processedArgs;
-
+async function loadConfig() {
   const configPaths = ["config.yaml", "config.yml"].map(name =>
     path.join(os.homedir(), ".config", "ppp", name)
   );
@@ -51,7 +50,10 @@ async function main() {
     process.stderr.write(`Warning: ${err.message}\n`);
     return {};
   });
+  return conf;
+}
 
+function getFields(conf, opts) {
   const defaultFields = [
     "name",
     "version",
@@ -67,12 +69,13 @@ async function main() {
     "tags",
   ];
   const fields = options.getFields(conf, opts, defaultFields);
+  return fields;
+}
 
+function getWrapSize(conf, opts) {
   const defaultWrapSize = 80;
   const wrapSize = options.getWrapSize(conf, opts, defaultWrapSize);
-
-  const pkg = await fetchPackage(args[0]);
-  await printPackage(pkg, fields, wrapSize);
+  return wrapSize;
 }
 
 async function fetchPackage(name) {
