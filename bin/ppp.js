@@ -87,7 +87,7 @@ async function fetchPackage(name) {
 async function printPackage(pkg, fields, wrapSize) {
   const indentSize = 2;
   const opts = {
-    wrapSize: wrapSize !== null ? Math.max(wrapSize - indentSize, 0) : null,
+    wrapSize: Math.max(wrapSize - indentSize, 0),
     indentSize,
   };
   const text = await printer.print(pkg, fields, opts, npm);
