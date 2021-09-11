@@ -15,7 +15,7 @@
     "ppp": "bin/ppp.js"
   },
   "engines": {
-    "node": ">=12.22.0"
+    "node": "^12.22.0 || ^14.17.0 || >=16.0.0"
   },
   "scripts": {
     "lint": "run-s lint:eslint lint:prettier",
