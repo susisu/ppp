@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import os from "node:os";
-import path from "node:path";
+import os from "os";
+import path from "path";
 import commander from "commander";
 import indent from "indent-string";
 import wrap from "wrap-ansi";
