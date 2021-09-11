@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 
+import os from "node:os";
+import path from "node:path";
 import commander from "commander";
 import indent from "indent-string";
-import os from "os";
-import path from "path";
 import wrap from "wrap-ansi";
-
 import * as config from "../lib/config.js";
 import { npm } from "../lib/npm.js";
 import * as options from "../lib/options.js";
