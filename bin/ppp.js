@@ -88,20 +88,18 @@ function getFields(conf) {
 }
 
 function getWrapSize(conf) {
-  const wrapSize = commander.getOptionValue("wrap");
+  let wrapSize = commander.getOptionValue("wrap");
   if (wrapSize !== undefined) {
     if (Number.isNaN(wrapSize)) {
       throw new TypeError("'wrap' must be an integer");
     }
     return wrapSize > 0 ? wrapSize : null;
   }
-  if (!Object.prototype.hasOwnProperty.call(conf, "wrap")) {
-    return defaultWrapSize;
+  wrapSize = config.getWrapSize(conf);
+  if (wrapSize !== undefined) {
+    return wrapSize;
   }
-  if (typeof conf["wrap"] !== "number") {
-    throw new TypeError("'wrap' must be an integer");
-  }
-  return conf["wrap"] > 0 ? conf["wrap"] : null;
+  return defaultWrapSize;
 }
 
 async function fetchPackage() {
