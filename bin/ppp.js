@@ -38,7 +38,7 @@ commander
   })
   .parseAsync()
   .catch(err => {
-    process.stderr.write(`Error: ${err.message}\n`);
+    process.stderr.write(`${String(err.message)}\n`);
     process.exitCode = 1;
   });
 
@@ -47,7 +47,7 @@ async function loadConfig() {
     path.join(os.homedir(), ".config", "ppp", name)
   );
   const conf = await config.load(configPaths).catch(err => {
-    process.stderr.write(`Warning: ${err.message}\n`);
+    process.stderr.write(`Warning: ${String(err)}\n`);
     return {};
   });
   return conf;
