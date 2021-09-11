@@ -32,7 +32,7 @@ commander
   .parse();
 
 main().catch(err => {
-  process.stderr.write(String(err) + "\n");
+  process.stderr.write(`Error: ${err.message}\n`);
   process.exitCode = 1;
 });
 
@@ -48,7 +48,7 @@ async function main() {
     path.join(os.homedir(), ".config", "ppp", name)
   );
   const conf = await config.load(configPaths).catch(err => {
-    process.stderr.write(`Warning: failed to load config: ${String(err)}\n`);
+    process.stderr.write(`Warning: ${err.message}\n`);
     return {};
   });
 
@@ -79,7 +79,7 @@ async function fetchPackage(name) {
   const data = name !== undefined ? await npm.view(name) : await npm.stdin();
   const pkg = isArray(data) ? data[data.length - 1] : data;
   if (!isObject(pkg)) {
-    throw new TypeError("Unexpected format");
+    throw new TypeError("Unexpected package format");
   }
   return pkg;
 }
