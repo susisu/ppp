@@ -7,4 +7,5 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: ["./lib/**/*.js", "!./lib/**/*.spec.js"],
   coverageDirectory: "coverage",
+  transform: {},
 };
