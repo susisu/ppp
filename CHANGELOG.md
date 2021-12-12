@@ -1,3 +1,6 @@
+## 0.1.2 (2021-12-12)
+- Upgrade dependencies
+
 ## 0.1.1 (2021-09-12)
 - Fix `ppp --version`
 
